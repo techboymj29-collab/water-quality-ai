@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Quality AI</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #dbeafe);
+    color: #123047;
+}
+
+.container {
+    max-width: 850px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px #164e6330;
+}
+
+header {
+    background: linear-gradient(135deg, #0369a1, #06b6d4);
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.drop {
+    font-size: 55px;
+    animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+    50% { transform: translateY(-8px); }
+}
+
+header h1 {
+    margin: 10px 0;
+}
+
+header p {
+    margin-bottom: 0;
+}
+
+main {
+    padding: 25px;
+}
+
+.notice {
+    background: #ecfeff;
+    border-left: 4px solid #06b6d4;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 16px;
+    outline-color: #06b6d4;
+}
+
+button {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+    background: linear-gradient(90deg, #0284c7, #06b6d4);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.reset {
+    background: #e2e8f0;
+    color: #123047;
+    margin-top: 10px;
+}
+
+#result {
+    display: none;
+    margin-top: 22px;
+    padding: 20px;
+    border-radius: 14px;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 18px;
+    background: #f0f9ff;
+    font-size: 12px;
+    color: #475569;
+}
+
+@media(max-width: 550px) {
+    body { padding: 8px; }
+    .grid { grid-template-columns: 1fr; }
+    main { padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+    <div class="drop">💧</div>
+    <h1>Water Quality AI</h1>
+    <p>Smart Water Potability Analysis</p>
+</header>
+
+<main>
+    <div class="notice">
+        🧪 Enter the laboratory measurements of your water sample.
+        All nine measurements are required for analysis.
+    </div>
+
+    <form id="waterForm">
+        <div class="grid">
+
+            <div>
+                <label for="ph">pH</label>
+                <input id="ph" type="number" step="any"
+                       min="0" max="14" placeholder="e.g. 7.2" required>
+            </div>
+
+            <div>
+                <label for="Hardness">Hardness (mg/L)</label>
+                <input id="Hardness" type="number" step="any"
+                       min="0" placeholder="e.g. 180" required>
+            </div>
+
+            <div>
+                <label for="Solids">Total Dissolved Solids</label>
+                <input id="Solids" type="number" step="any"
+                       min="0" placeholder="e.g. 15000" required>
+            </div>
+
+            <div>
+                <label for="Chloramines">Chloramines (mg/L)</label>
+                <input id="Chloramines" type="number" step="any"
+                       min="0" placeholder="e.g. 7" required>
+            </div>
+
+            <div>
+                <label for="Sulfate">Sulfate (mg/L)</label>
+                <input id="Sulfate" type="number" step="any"
+                       min="0" placeholder="e.g. 330" required>
+            </div>
+
+            <div>
+                <label for="Conductivity">Conductivity (μS/cm)</label>
+                <input id="Conductivity" type="number" step="any"
+                       min="0" placeholder="e.g. 420" required>
+            </div>
+
+            <div>
+                <label for="Organic_carbon">Organic Carbon (mg/L)</label>
+                <input id="Organic_carbon" type="number" step="any"
+                       min="0" placeholder="e.g. 12" required>
+            </div>
+
+            <div>
+                <label for="Trihalomethanes">Trihalomethanes (μg/L)</label>
+                <input id="Trihalomethanes" type="number" step="any"
+                       min="0" placeholder="e.g. 65" required>
+            </div>
+
+            <div>
+                <label for="Turbidity">Turbidity (NTU)</label>
+                <input id="Turbidity" type="number" step="any"
+                       min="0" placeholder="e.g. 4" required>
+            </div>
+
+        </div>
+
+        <button type="submit">🔍 Analyze Water</button>
+        <button type="reset" class="reset">↻ Reset Values</button>
+    </form>
+
+    <div id="result" role="status"></div>
+</main>
+
+<footer>
+    Water Quality AI · Machine Learning Project
+    <br><br>
+    Predictions must not replace certified laboratory water testing.
+</footer>
+
+</div>
+
+<script>
+document.getElementById("waterForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const result = document.getElementById("result");
+
+    result.style.display = "block";
+    result.style.background = "#fff7ed";
+    result.style.color = "#9a3412";
+
+    result.innerHTML =
+        "<h2>🧠 AI Model Connection Needed</h2>" +
+        "<p>Your measurements have been entered successfully. " +
+        "The next step is connecting your trained Random Forest model " +
+        "so the website can produce genuine machine-learning predictions.</p>" +
+        "<p><strong>No prediction has been made yet.</strong></p>";
+});
+
+document.getElementById("waterForm").addEventListener("reset", function() {
+    document.getElementById("result").style.display = "none";
+});
+</script>
+
+</body>
+</html>
